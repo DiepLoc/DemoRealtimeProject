@@ -60,6 +60,7 @@ namespace net_api_backend.Repositories
         {
             var brandId = query.BrandId;
             if (brandId == null) return await dbContext.Devices.CountAsync();
+
             return await dbContext.Devices.Where(d => d.BrandId == brandId).CountAsync();
         }
 
@@ -83,13 +84,14 @@ namespace net_api_backend.Repositories
 
         public async Task Update(long id, Device newDeviceState)
         {
-            if (id != newDeviceState.Id) throw new Exception("Bad request");
+            if (newDeviceState != null && id != newDeviceState.Id) throw new Exception("Bad request");
 
             var device = await dbContext.Devices.FindAsync(id);
 
             if (device == null) throw new Exception("Not found");
 
-            dbContext.Update(newDeviceState);
+            dbContext.Entry(device).State = EntityState.Detached;
+            dbContext.Entry(newDeviceState).State = EntityState.Modified;
             await dbContext.SaveChangesAsync();
         }
 

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using net_api_backend.Hubs;
 using net_api_backend.Models;
 using net_api_backend.Repositories;
 using System;
@@ -31,10 +32,17 @@ namespace net_api_backend
             services.AddEntityFrameworkSqlite().AddDbContext<sqliteContext>(item => item.UseSqlite(Configuration.GetConnectionString("SqliteConnectionString")));
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
-            services.AddCors(option => option.AddPolicy("ChinookAPIPolicy", builder => {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-
-            }));
+            services.AddSignalR();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ClientPermission", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
+                });
+            });
             services.AddControllers()
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddControllers();
@@ -50,15 +58,16 @@ namespace net_api_backend
 
             app.UseHttpsRedirection();
 
+            app.UseCors("ClientPermission");
+
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseCors("ChinookAPIPolicy");
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DeviceHub>("/api/hubs");
             });
         }
     }
