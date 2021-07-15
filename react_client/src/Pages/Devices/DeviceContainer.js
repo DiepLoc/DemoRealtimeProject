@@ -1,6 +1,6 @@
 import { Tabs, Typography, Spin } from "antd";
 import { useState } from "react";
-import useListItem from "../../Components/useListItem";
+import { useListItem } from "../../Components";
 import DeviceList from "./DeviceList/DeviceList";
 const { TabPane } = Tabs;
 const { Text } = Typography;

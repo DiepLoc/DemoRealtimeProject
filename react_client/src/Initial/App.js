@@ -12,21 +12,21 @@ const AppContext = React.createContext(null);
 function App() {
   const [state, dispatch] = useReducer(reducer, initStore());
 
+  const RouresRender = routerConfig.map((router) => (
+    <Route
+      key={router.key}
+      path={router.path}
+      exact={router.exact}
+      children={router.children}
+    />
+  ));
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       <div className="App">
         <AppHeader></AppHeader>
         <div style={{ padding: "50px 50px", margin: "0px auto" }}>
-          <Switch>
-            {routerConfig.map((router) => (
-              <Route
-                key={router.key}
-                path={router.path}
-                exact={router.exact}
-                children={router.children}
-              />
-            ))}
-          </Switch>
+          <Switch>{RouresRender}</Switch>
         </div>
         <AppFooter></AppFooter>
       </div>

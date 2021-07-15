@@ -35,6 +35,12 @@ const DeviceModal = ({ visible, handleOk, onCancel, initData }) => {
     handleOk(formData);
   };
 
+  const brandsSelectOptions = brands.map((brand) => (
+    <Select.Option value={brand.id} key={brand.name}>
+      {brand.name}
+    </Select.Option>
+  ));
+
   return (
     <Modal
       title={initData ? "Edit" : "Create"}
@@ -53,11 +59,20 @@ const DeviceModal = ({ visible, handleOk, onCancel, initData }) => {
         <Form.Item
           label="Name"
           name="name"
-          rules={[{ required: true, max: 50 }]}
+          rules={[
+            { required: true, message: "Name is required" },
+            {max: 50},
+            {
+              validator: (_, value) =>
+                value.trim() == ""
+                  ? Promise.reject(new Error("Name not empty"))
+                  : Promise.resolve(),
+            },
+          ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Brand" name="brandId" rules={[{ required: true }]}>
+        <Form.Item label="Brand" name="brandId" rules={[{ required: true, message: "Brand is required" }]}>
           <Select
             loading={loadingBrand}
             placeholder="Select device's brand"
@@ -66,16 +81,12 @@ const DeviceModal = ({ visible, handleOk, onCancel, initData }) => {
               option.children.toLowerCase().includes(input.toLowerCase())
             }
           >
-            {brands.map((brand) => (
-              <Select.Option value={brand.id} key={brand.name}>
-                {brand.name}
-              </Select.Option>
-            ))}
+            {brandsSelectOptions}
           </Select>
         </Form.Item>
         <Form.Item
           name="price"
-          rules={[{ type: "integer", min: 0, required: true }]}
+          rules={[{ type: "integer", min: 0, max: 100000, required: true }]}
           label="Price"
           extra="Unit: dollar ($)"
         >

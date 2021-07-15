@@ -21,12 +21,18 @@ const AppHeader = () => {
   useEffect(() => {
     reloadCount();
   }, [requestReload]);
-  console.log(requestReload)
+  console.log(requestReload);
 
   useEffect(() => {
-    dispatch({type: "CHANGE_TOTAL_DEVICE", payload: count});
-    console.log(count)
-  }, [count])
+    dispatch({ type: "CHANGE_TOTAL_DEVICE", payload: count });
+    console.log(count);
+  }, [count]);
+
+  const menusRender = headerConfig.map((header) => (
+    <Menu.Item key={header.key}>
+      <Link to={header.link}>{header.displayName}</Link>
+    </Menu.Item>
+  ));
 
   return (
     <Header>
@@ -36,11 +42,7 @@ const AppHeader = () => {
         mode="horizontal"
         selectedKeys={currentPath}
       >
-        {headerConfig.map((header) => (
-          <Menu.Item key={header.key}>
-            <Link to={header.link}>{header.displayName}</Link>
-          </Menu.Item>
-        ))}
+        {menusRender}
       </Menu>
       <div
         style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}

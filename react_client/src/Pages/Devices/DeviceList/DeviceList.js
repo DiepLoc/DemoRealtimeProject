@@ -1,112 +1,67 @@
-import {
-  Button,
-  message,
-  notification,
-  Popconfirm,
-  Space,
-  Table,
-  Tooltip,
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, message, notification, Table } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
-import React, { useEffect, useState } from "react";
-import useListItem from "../../../Components/useListItem";
-import useMySignalR from "../../../Components/useMySignalR";
+import { useListItem, useMySignalR, usePagination } from "../../../Components";
 import DeviceModal from "../DeviceModal/DeviceModal";
-import { handleAddDevice, handleDeleteDevice, handleEditDevice } from "./DeviceAxios";
+import tableColumns from "./tableColumns";
+import {
+  handleAddDevice,
+  handleDeleteDevice,
+  handleEditDevice,
+} from "./DeviceAxios";
+import errorHandler from "../../../Helpers/errorHandler";
 
-const reloadString = (brandId, page) =>
-  `devices?${brandId !== "all" ? `&brandid=${brandId}` : ""}${
-    page ? `&page=${page}` : ""
-  }`;
+const reloadString = (brandId, page, pageSize) => {
+  let urlString = "devices?";
+  if (brandId !== "all") urlString += `&brandid=${brandId}`;
+  if (page) urlString += `&page=${page}`;
+  if (pageSize) urlString += `&pageSize=${pageSize}`;
+  return urlString;
+};
 
 const DeviceList = ({ brandId }) => {
+  const [currentPage, currentPageSize, total, setPageInfo] = usePagination();
   const [deviceInfo, reloadDeviceInfo, loading, error] = useListItem(
-    reloadString(brandId)
+    reloadString(brandId, null, currentPageSize)
   );
   const [currentDeviceId, setCurrentDeviceId] = useState(null);
   const [visibleModal, setVisibleModal] = useState(false);
-
-  const [requestReload] = useMySignalR("ReloadData");
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageSize, setCurrentPageSize] = useState(2);
-  const [total, setTotal] = useState(0);
+  const [reloadDataMessage] = useMySignalR("ReloadData");
 
   useEffect(() => {
-    reloadDeviceInfo(reloadString(brandId, currentPage));
-    notification.info({message: "Data has been updated", description: "Data has just been updated"})
-  }, [requestReload]);
+    if (!reloadDataMessage) return;
+
+    reloadDeviceInfo(
+      reloadString(brandId, currentPage, currentPageSize)
+    );
+    notification.info({
+      message: "Data has been updated",
+      description: reloadDataMessage,
+    });
+  }, [reloadDataMessage]);
 
   useEffect(() => {
-    reloadDeviceInfo(reloadString(brandId));
+    reloadDeviceInfo(reloadString(brandId, null, currentPageSize));
   }, [brandId]);
 
   useEffect(() => {
-    reloadDeviceInfo(reloadString(brandId, currentPage));
-  }, [currentPage]);
+    reloadDeviceInfo(
+      reloadString(brandId, currentPage, currentPageSize)
+    );
+  }, [currentPage, currentPageSize]);
 
   useEffect(() => {
     if (!deviceInfo?.pageInfo) return;
-
-    const {page, pageSize, count} = deviceInfo.pageInfo;
-
-    if (page !== currentPage) setCurrentPage(page);
-    if (pageSize !== currentPageSize) setCurrentPageSize(pageSize);
-    if (count !== total) setTotal(count);
-
+    
+    const { page, pageSize, count } = deviceInfo.pageInfo;
+    setPageInfo.setSync(page, pageSize, count)
   }, [deviceInfo]);
-
-  const columns = [
-    {
-      title: "Id",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Brand",
-      dataIndex: "braneName",
-      key: "brandName",
-      render: (_, record) => record.brand.name,
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      render: (_, record) => (
-        <Space>
-          <Button onClick={() => onEdit(record.id)}>Edit</Button>
-          <Popconfirm
-            title="Are you sure to delete this record? Cannot be rollback!"
-            placement="bottomRight"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Delete"
-            cancelText="No"
-            okButtonProps={{ ghost: true, danger: true }}
-          >
-            <Tooltip title="Remove">
-              <Button danger>Delete</Button>
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
 
   const resetModalState = () => {
     setCurrentDeviceId(null);
     setVisibleModal(false);
-  }
+  };
 
   const onEdit = (id) => {
     setCurrentDeviceId(id);
@@ -118,19 +73,8 @@ const DeviceList = ({ brandId }) => {
     setVisibleModal(true);
   };
 
-  const onCancel = () => {
-    resetModalState();
-  };
-
   const handleDelete = async (id) => {
-    try {
-      await handleDeleteDevice(id);
-
-      message.success("Success");
-    } catch (err) {
-      message.error("Failed");
-      console.log(err.response);
-    }
+    handleChangeDataContainer(async () => await handleDeleteDevice(id));
   };
 
   const handleAddOrEdit = (formData) => {
@@ -139,28 +83,27 @@ const DeviceList = ({ brandId }) => {
   };
 
   const handleAdd = async (formData) => {
-    try {
-      await handleAddDevice(formData);
-
-      message.success("Success");
-      resetModalState();
-    } catch(err) {
-      message.error("Failed");
-      console.log(err.response);
-    }
-  }
+    handleChangeDataContainer(async () => await handleAddDevice(formData));
+  };
 
   const handleEdit = async (formData) => {
-    try {
-      await handleEditDevice(currentDeviceId, formData);
+    handleChangeDataContainer(async () =>
+      handleEditDevice(currentDeviceId, formData)
+    );
+  };
 
+  const handleChangeDataContainer = async (callback) => {
+    try {
+      await callback();
       message.success("Success");
       resetModalState();
-    } catch(err) {
-      message.error("Failed");
+    } catch (err) {
+      message.error(errorHandler(err) ?? "Something wrong");
       console.log(err.response);
     }
-  }
+  };
+
+  const columns = tableColumns({ handleDelete, onEdit });
 
   if (error) return <Text type="danger">{error}</Text>;
 
@@ -181,15 +124,15 @@ const DeviceList = ({ brandId }) => {
         pagination={{
           current: currentPage,
           pageSize: currentPageSize,
-          total,
-          onChange: (num) => setCurrentPage(num),
+          total: total,
+          onChange: (num) => setPageInfo.currentPage(num),
         }}
       />
       <DeviceModal
         visible={visibleModal}
         initData={deviceInfo?.devices?.find((d) => d.id === currentDeviceId)}
         handleOk={handleAddOrEdit}
-        onCancel={onCancel}
+        onCancel={resetModalState}
       />
     </div>
   );

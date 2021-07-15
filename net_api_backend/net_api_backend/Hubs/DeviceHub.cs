@@ -16,6 +16,7 @@ namespace net_api_backend.Hubs
 
         public async Task RequestReloadData()
         {
+
             await Clients.All.ReloadData(DateTime.Now.ToString("yyyyMMddHHmmss"));
         }
     }

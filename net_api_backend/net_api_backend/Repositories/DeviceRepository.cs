@@ -17,7 +17,7 @@ namespace net_api_backend.Repositories
         }
 
         public async Task<Device> Add(Device newDevice)
-        {
+        {          
             dbContext.Devices.Add(newDevice);
             await dbContext.SaveChangesAsync();
 
@@ -38,22 +38,48 @@ namespace net_api_backend.Repositories
         public async Task<IEnumerable<Device>> GetAll(QueryParameter query)
         {
             var (pageSize, page, brandId) = query;
+            IQueryable<Device> queryable;
+
             if (brandId != null)
             {
-                return await dbContext.Devices
+                queryable = dbContext.Devices
                     .Include("Brand")
                     .Where(d => d.BrandId == brandId)
                     .OrderBy(d => d.Name)
                     .Skip(pageSize * (page - 1))
-                    .Take(pageSize)
-                    .ToListAsync();
-            }
-            return await dbContext.Devices
+                    .Take(pageSize);
+
+                while( await queryable.CountAsync() < 1 && page > 1)
+                {
+                    page--;
+                    queryable = dbContext.Devices
+                    .Include("Brand")
+                    .Where(d => d.BrandId == brandId)
+                    .OrderBy(d => d.Name)
+                    .Skip(pageSize * (page - 1))
+                    .Take(pageSize);
+                }
+            } 
+            else
+            {
+                queryable = dbContext.Devices
                 .Include("Brand")
                 .OrderBy(d => d.Name)
                 .Skip(pageSize * (page - 1))
-                .Take(pageSize)
-                .ToListAsync();
+                .Take(pageSize);
+
+                while (await queryable.CountAsync() < 1 && page > 1)
+                {
+                    page--;
+                    queryable = dbContext.Devices
+                        .Include("Brand")
+                        .OrderBy(d => d.Name)
+                        .Skip(pageSize * (page - 1))
+                        .Take(pageSize);
+                }
+            }
+            query.Page = page;
+            return await queryable.ToListAsync();
         }
         
         public async Task<long> GetCount(QueryParameter query)

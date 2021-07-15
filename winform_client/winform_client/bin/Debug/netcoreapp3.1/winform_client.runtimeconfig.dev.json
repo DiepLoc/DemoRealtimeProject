@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Painkiller\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Painkiller\\.nuget\\packages"
+    ]
+  }
+}

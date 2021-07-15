@@ -61,7 +61,7 @@ namespace net_api_backend.Controllers
         public async Task<ActionResult<Device>> AddDevice(Device newDevice)
         {
             var device = await repo.Add(newDevice);
-            await requestReloadData();
+            await requestReloadData(@$"{device.Name}(id:{device.Id}) has been added (1 items)");
             return device;
         }
 
@@ -69,7 +69,7 @@ namespace net_api_backend.Controllers
         public async Task<IActionResult> UpdateDevice(long id, Device newDevice)
         {
             await repo.Update(id, newDevice);
-            await requestReloadData();
+            await requestReloadData(@$"{newDevice.Name}(id:{id}) has been updated (1 items)");
             return NoContent();
 
         }
@@ -77,8 +77,11 @@ namespace net_api_backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDevice(long id)
         {
+            var device = await repo.GetById(id);
+            if (device == null) return NotFound();
+
             await repo.Delete(id);
-            await requestReloadData();
+            await requestReloadData(@$"{device.Name}(id:{device.Id}) has been removed (1 items)");
             return NoContent();
         }
 
@@ -88,9 +91,9 @@ namespace net_api_backend.Controllers
             return await repo.GetBrand(id);
         }
 
-        private async Task requestReloadData()
+        private async Task requestReloadData(string message = "")
         {
-            await deviceHub.Clients.All.ReloadData(DateTime.Now.ToString("yyyyMMddHHmmss"));
+            await deviceHub.Clients.All.ReloadData(DateTime.Now.ToString(@"[HH:mm:ss yyyy-MM-dd ] ") + message);
             return;
         }
     }
