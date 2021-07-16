@@ -17,7 +17,7 @@ namespace winform_client.Api
 
         private HttpClientApi() : base()
         {
-            BaseAddress = new Uri(@"https://localhost:44318/api/");
+            BaseAddress = new Uri(Environment.GetEnvironmentVariable("api-url") ?? @"https://localhost:44318/api/");
             DefaultRequestHeaders.Accept.Clear();
             DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue(@"application/json"));

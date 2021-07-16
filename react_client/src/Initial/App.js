@@ -9,17 +9,17 @@ import "./App.css";
 
 const AppContext = React.createContext(null);
 
+const RouresRender = routerConfig.map((router) => (
+  <Route
+    key={router.key}
+    path={router.path}
+    exact={router.exact}
+    children={router.children}
+  />
+));
+
 function App() {
   const [state, dispatch] = useReducer(reducer, initStore());
-
-  const RouresRender = routerConfig.map((router) => (
-    <Route
-      key={router.key}
-      path={router.path}
-      exact={router.exact}
-      children={router.children}
-    />
-  ));
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

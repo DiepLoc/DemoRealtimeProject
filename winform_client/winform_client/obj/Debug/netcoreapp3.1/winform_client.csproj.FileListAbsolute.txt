@@ -39,3 +39,4 @@ D:\Code\__Projects\DemoProject\winform_client\winform_client\bin\Debug\netcoreap
 D:\Code\__Projects\DemoProject\winform_client\winform_client\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll
 D:\Code\__Projects\DemoProject\winform_client\winform_client\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 D:\Code\__Projects\DemoProject\winform_client\winform_client\bin\Debug\netcoreapp3.1\System.Threading.Channels.dll
+D:\Code\__Projects\DemoProject\winform_client\winform_client\obj\Debug\netcoreapp3.1\winform_client.Properties.Resources.resources

@@ -35,7 +35,7 @@ namespace winform_client.Models
             return (int)Math.Ceiling((float)Count / PageSize);
         }
 
-        public void checkPageWithDelete()
+        public void CheckPageWithDelete()
         {
             Count -= 1;
             if (Page > MaxPage()) Page = MaxPage(); 

@@ -1,5 +1,5 @@
 import { Tabs, Typography, Spin } from "antd";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useListItem } from "../../Components";
 import DeviceList from "./DeviceList/DeviceList";
 const { TabPane } = Tabs;
@@ -10,6 +10,14 @@ const Devices = () => {
     useListItem("brands");
   const [currentBrandId, setCurrentBrandId] = useState("all");
 
+  const brandsRender = useMemo(
+    () =>
+      brands.map((brand) => (
+        <TabPane tab={brand.name} key={brand.id}></TabPane>
+      )),
+    [brands]
+  );
+
   if (errorBrand) return <Text type="danger">{errorBrand}</Text>;
 
   if (loadingBrand)
@@ -18,7 +26,7 @@ const Devices = () => {
         <Spin />
       </div>
     );
-
+    
   return (
     <div>
       <Tabs
@@ -27,12 +35,10 @@ const Devices = () => {
         activeKey={currentBrandId}
       >
         <TabPane tab="All" key="all"></TabPane>
-        {brands.map((brand) => {
-          return <TabPane tab={brand.name} key={brand.id}></TabPane>;
-        })}
+        {brandsRender}
       </Tabs>
 
-      <DeviceList brandId={currentBrandId}/>
+      <DeviceList brandId={currentBrandId} />
     </div>
   );
 };

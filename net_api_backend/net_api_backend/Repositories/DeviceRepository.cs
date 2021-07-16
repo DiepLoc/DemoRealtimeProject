@@ -37,49 +37,28 @@ namespace net_api_backend.Repositories
 
         public async Task<IEnumerable<Device>> GetAll(QueryParameter query)
         {
+            IQueryable<Device> queryable = GetQueryDevice(query);
+
+            while (await queryable.CountAsync() < 1 && query.Page > 1)
+            {
+                query.Page = query.Page - 1;
+                queryable = GetQueryDevice(query);
+            }
+            return await queryable.ToListAsync();
+        }
+
+        private IQueryable<Device> GetQueryDevice(QueryParameter query)
+        {
             var (pageSize, page, brandId) = query;
-            IQueryable<Device> queryable;
 
-            if (brandId != null)
-            {
-                queryable = dbContext.Devices
-                    .Include("Brand")
-                    .Where(d => d.BrandId == brandId)
-                    .OrderBy(d => d.Name)
-                    .Skip(pageSize * (page - 1))
-                    .Take(pageSize);
+            IQueryable<Device> queryable = dbContext.Devices.Include("Brand");
+            if (brandId != null) queryable = queryable.Where(d => d.BrandId == brandId);
 
-                while( await queryable.CountAsync() < 1 && page > 1)
-                {
-                    page--;
-                    queryable = dbContext.Devices
-                    .Include("Brand")
-                    .Where(d => d.BrandId == brandId)
-                    .OrderBy(d => d.Name)
-                    .Skip(pageSize * (page - 1))
-                    .Take(pageSize);
-                }
-            } 
-            else
-            {
-                queryable = dbContext.Devices
-                .Include("Brand")
-                .OrderBy(d => d.Name)
+            queryable = queryable.OrderBy(d => d.Name)
                 .Skip(pageSize * (page - 1))
                 .Take(pageSize);
 
-                while (await queryable.CountAsync() < 1 && page > 1)
-                {
-                    page--;
-                    queryable = dbContext.Devices
-                        .Include("Brand")
-                        .OrderBy(d => d.Name)
-                        .Skip(pageSize * (page - 1))
-                        .Take(pageSize);
-                }
-            }
-            query.Page = page;
-            return await queryable.ToListAsync();
+            return queryable;
         }
         
         public async Task<long> GetCount(QueryParameter query)

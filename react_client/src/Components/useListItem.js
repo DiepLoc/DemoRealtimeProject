@@ -7,7 +7,6 @@ const useListItem = (url) => {
   const [error, setError] = useState(null);
 
   const reloadItems = async (newUrl) => {
-    console.log(newUrl)
     const targetUrl = newUrl || url;
     try {
       setLoading(true);

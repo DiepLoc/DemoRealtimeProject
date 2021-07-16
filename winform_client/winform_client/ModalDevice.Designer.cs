@@ -41,11 +41,14 @@ namespace winform_client
             this.btnSubmit = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.labelLoading = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numberPrice)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -163,16 +166,36 @@ namespace winform_client
             this.panel4.Controls.Add(this.btnCancel);
             this.panel4.Controls.Add(this.btnSubmit);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 170);
+            this.panel4.Location = new System.Drawing.Point(10, 207);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(347, 48);
             this.panel4.TabIndex = 3;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.labelLoading);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(10, 159);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(347, 48);
+            this.panel5.TabIndex = 5;
+            // 
+            // labelLoading
+            // 
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labelLoading.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.labelLoading.Location = new System.Drawing.Point(106, 11);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(0, 25);
+            this.labelLoading.TabIndex = 0;
             // 
             // ModalDevice
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(367, 228);
+            this.ClientSize = new System.Drawing.Size(367, 265);
+            this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
@@ -190,6 +213,8 @@ namespace winform_client
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -208,5 +233,7 @@ namespace winform_client
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.NumericUpDown numberPrice;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Label labelLoading;
     }
 }

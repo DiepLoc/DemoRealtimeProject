@@ -31,12 +31,15 @@ namespace winform_client
         {
             this.btnDelete = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnReconnect = new System.Windows.Forms.Button();
+            this.labelMessage = new System.Windows.Forms.Label();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.richTextHubs = new System.Windows.Forms.RichTextBox();
             this.btnPrevious = new System.Windows.Forms.Button();
             this.labelPage = new System.Windows.Forms.Label();
             this.btnNext = new System.Windows.Forms.Button();
@@ -61,6 +64,8 @@ namespace winform_client
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnReconnect);
+            this.panel1.Controls.Add(this.labelMessage);
             this.panel1.Controls.Add(this.btnAdd);
             this.panel1.Controls.Add(this.btnEdit);
             this.panel1.Controls.Add(this.btnDelete);
@@ -69,6 +74,27 @@ namespace winform_client
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(586, 39);
             this.panel1.TabIndex = 3;
+            // 
+            // btnReconnect
+            // 
+            this.btnReconnect.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnReconnect.Location = new System.Drawing.Point(279, 0);
+            this.btnReconnect.Name = "btnReconnect";
+            this.btnReconnect.Size = new System.Drawing.Size(94, 39);
+            this.btnReconnect.TabIndex = 6;
+            this.btnReconnect.Text = "Reload";
+            this.btnReconnect.UseVisualStyleBackColor = true;
+            this.btnReconnect.Click += new System.EventHandler(this.btnReconnect_Click);
+            // 
+            // labelMessage
+            // 
+            this.labelMessage.AutoSize = true;
+            this.labelMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelMessage.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.labelMessage.Location = new System.Drawing.Point(0, 0);
+            this.labelMessage.Name = "labelMessage";
+            this.labelMessage.Size = new System.Drawing.Size(0, 20);
+            this.labelMessage.TabIndex = 5;
             // 
             // btnAdd
             // 
@@ -126,6 +152,7 @@ namespace winform_client
             this.dataGridView1.Location = new System.Drawing.Point(20, 87);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 29;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -135,6 +162,7 @@ namespace winform_client
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.richTextHubs);
             this.panel2.Controls.Add(this.btnPrevious);
             this.panel2.Controls.Add(this.labelPage);
             this.panel2.Controls.Add(this.btnNext);
@@ -143,6 +171,18 @@ namespace winform_client
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(586, 48);
             this.panel2.TabIndex = 5;
+            // 
+            // richTextHubs
+            // 
+            this.richTextHubs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextHubs.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.richTextHubs.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.richTextHubs.Location = new System.Drawing.Point(0, 0);
+            this.richTextHubs.Name = "richTextHubs";
+            this.richTextHubs.ReadOnly = true;
+            this.richTextHubs.Size = new System.Drawing.Size(448, 48);
+            this.richTextHubs.TabIndex = 6;
+            this.richTextHubs.Text = "Trying to connect to hubs";
             // 
             // btnPrevious
             // 
@@ -184,6 +224,7 @@ namespace winform_client
             this.richTextBox1.ForeColor = System.Drawing.SystemColors.Highlight;
             this.richTextBox1.Location = new System.Drawing.Point(20, 295);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(586, 87);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
@@ -204,6 +245,7 @@ namespace winform_client
             this.Text = "Device Manager";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -225,6 +267,9 @@ namespace winform_client
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Label labelPage;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Label labelMessage;
+        private System.Windows.Forms.RichTextBox richTextHubs;
+        private System.Windows.Forms.Button btnReconnect;
     }
 }
 

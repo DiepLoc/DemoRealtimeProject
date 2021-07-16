@@ -9,6 +9,12 @@ import { AppContext } from "../Initial/App";
 import useTotalCount from "../Components/useTotalCount";
 import useMySignalR from "../Components/useMySignalR";
 
+const menusRender = headerConfig.map((header) => (
+  <Menu.Item key={header.key}>
+    <Link to={header.link}>{header.displayName}</Link>
+  </Menu.Item>
+));
+
 const AppHeader = () => {
   const location = useLocation();
   const currentPath = location?.pathname?.split("/")[1] || "";
@@ -21,18 +27,11 @@ const AppHeader = () => {
   useEffect(() => {
     reloadCount();
   }, [requestReload]);
-  console.log(requestReload);
 
   useEffect(() => {
     dispatch({ type: "CHANGE_TOTAL_DEVICE", payload: count });
     console.log(count);
   }, [count]);
-
-  const menusRender = headerConfig.map((header) => (
-    <Menu.Item key={header.key}>
-      <Link to={header.link}>{header.displayName}</Link>
-    </Menu.Item>
-  ));
 
   return (
     <Header>
