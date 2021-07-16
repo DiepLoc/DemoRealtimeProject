@@ -53,7 +53,7 @@ namespace winform_client
             hubApi.SetCallBack(this.SyncData);
             hubApi.SetErrorCallback(() => {
                 MessageBox.Show("Connection to hubs interrupted, can't get Real time sync");
-                SetControlTextSalfThread(
+                SetControlTextSafeThread(
                     richTextHubs, 
                     "Trying to reconnect to hubs");
             });
@@ -61,14 +61,14 @@ namespace winform_client
             hubApi.SetReconnectedCallback(() =>
             {
                 MessageBox.Show("Reconnection to hubs is successful, data sync is enabled");
-                SetControlTextSalfThread(
+                SetControlTextSafeThread(
                     richTextHubs, 
                     "Reconnect to hubs successfully");
                 ReloadData();
             });
             hubApi.SetFirstConnectCallback(() =>
             {
-                SetControlTextSalfThread(
+                SetControlTextSafeThread(
                     richTextHubs,
                     "Connect to hubs successfully");
                 ReloadData();
@@ -94,7 +94,7 @@ namespace winform_client
             }
         }
 
-        public void SetControlTextSalfThread(Control control, string text)
+        public void SetControlTextSafeThread(Control control, string text)
         {
             SafeCallbackControl(control, () => control.Text = text);
         }
@@ -174,7 +174,7 @@ namespace winform_client
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             int indexRow = e.RowIndex;
-            if (!(indexRow >= 0)) return;
+            if (indexRow < 0) return;
 
             long selectedID = (long)dataGridView1.Rows[indexRow].Cells["Id"].Value;
             selectedDevice = Device.Clone(devices.First(d => d.Id == selectedID));
@@ -225,8 +225,8 @@ namespace winform_client
 
         public void SetLoading(bool loading = true)
         {
-            if (loading) SetControlTextSalfThread(labelMessage, "Processing, please wait...");
-            else SetControlTextSalfThread(labelMessage, string.Empty);
+            if (loading) SetControlTextSafeThread(labelMessage, "Processing, please wait...");
+            else SetControlTextSafeThread(labelMessage, string.Empty);
 
             SafeCallbackControl(this, () => this.Enabled = !loading);
         }
@@ -292,7 +292,7 @@ namespace winform_client
             string newTopLine = "- The data has been updated";
             if (!string.IsNullOrEmpty(message)) newTopLine = message + '\n';
 
-            SetControlTextSalfThread(richTextBox1, newTopLine + richTextBox1.Text);
+            SetControlTextSafeThread(richTextBox1, newTopLine + richTextBox1.Text);
         }
 
         private void btnReconnect_Click(object sender, EventArgs e)
